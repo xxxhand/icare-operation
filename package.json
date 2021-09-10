@@ -1,0 +1,15 @@
+{
+  "name": "icare-operation",
+  "version": "0.1.0",
+  "description": "A new package...",
+  "main": "bin/www.js",
+  "bin": {
+    "icare-operation": "bin/www.js"
+  },
+  "scripts": {
+    "test": "npx jest --config=.jestrc.json --runInBand --detectOpenHandles --forceExit"
+  },
+  "keywords": [],
+  "author": "xxxhand",
+  "license": "ISC"
+}
