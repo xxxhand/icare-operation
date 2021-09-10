@@ -11,5 +11,8 @@
   },
   "keywords": [],
   "author": "xxxhand",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "fs-extra": "^10.0.0"
+  }
 }
