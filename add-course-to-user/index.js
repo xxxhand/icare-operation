@@ -8,15 +8,29 @@ function successFormat(dbUser, excelUser) {
   return `${dbUser._id},${dbUser.name || dbUser.nickname},${excelUser.name},${dbUser.account.toLowerCase()},${excelUser.account.toLowerCase()}`
 }
 
+function uniqExl() {
+  const uniqMap = new Map();
+  for (const ele of arr) {
+    uniqMap.set(`${ele.name}${ele.account}${ele.phone}`, ele);
+  }
+
+  return Array.from(uniqMap.values())
+}
+
 async function filtering() {
   const res = []
   let failAry = []
   const notFoundAry = []
-  const gAccounts = new Map()
+  const gAccounts = new Map();
   let [notFountCnt, duplicateCnt] = [0, 0, 0]
-  for (const a of arr) {
 
+  const exlAry = uniqExl();
+  console.log('exlAry', exlAry.length);
+  let duplicateDBCount = 0
+
+  for (const a of exlAry) {
     const b = arr2.filter(x => (x.name === a.name || x.nickname === a.name));
+
     if (b.length === 0) {
       notFoundAry.push(a);
       notFountCnt += 1
@@ -25,17 +39,22 @@ async function filtering() {
     if (b.length > 1) {
       // console.log(`${a.name} length ${b.length}`)
       failAry = failAry.concat(b)
-      duplicateCnt += b.length
+      // duplicateCnt += b.length
+      duplicateCnt++
       continue
     }
     const [bb] = b;
     if (bb.account.toLowerCase().includes(a.account.toLowerCase())) {
       if (gAccounts.has(bb._id)) {
         // console.log(`Duplicated db id ${bb._id}`)
+        duplicateDBCount++
         continue
       }
       const str = `${bb._id},${bb.name || bb.nickname},${a.name},${bb.account.toLowerCase()},${a.account.toLowerCase()}`
       gAccounts.set(bb._id, str);
+    } else {
+      notFoundAry.push(a);
+      notFountCnt += 1
     }
   }
 
@@ -43,13 +62,15 @@ async function filtering() {
     res.push(ss)
   })
 
-  // console.log(`not found ${notFountCnt}`);
-  // console.log(`duplicate cnt ${duplicateCnt}`);
+  console.log('duplicateDBCount', duplicateDBCount);
+  console.log('duplicateCnt', duplicateCnt);
 
   const failTmpUserMap = new Map()
   for (const failTmpUser of failAry) { failTmpUserMap.set(failTmpUser._id, failTmpUser) }
   const uniqFailTmpUsers = Array.from(failTmpUserMap.values());
 
+  console.log('notFoundAry', notFoundAry.length);
+  console.log('first res', res.length);
   return {
     tmp: res,
     failTmp: uniqFailTmpUsers,
@@ -87,6 +108,9 @@ async function filterFailTmp(failTmpUsers) {
   }
   const uniqTmp = Array.from(tmpMap.values());
 
+
+  console.log('second uniqTmp', uniqTmp.length)
+  console.log('second notFound', notFound.length)
   return {
     tmp: uniqTmp,
     notFound
