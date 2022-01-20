@@ -1,4 +1,5 @@
 const path = require('path');
+
 const fs = require('fs-extra');
 
 const exlArr = require('./proc/exl.json');
@@ -12,7 +13,7 @@ function successFormat(dbUser, excelUser) {
 function uniqExl() {
   const uniqMap = new Map();
   for (const ele of exlArr) {
-    uniqMap.set(`${ele.name}${ele.account}${ele.phone}`, ele);
+    uniqMap.set(`${ele.name}${ele.account}`, ele);
   }
 
   return Array.from(uniqMap.values())
